@@ -3,6 +3,7 @@ package simulator.view;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.SwingUtilities;
 import javax.swing.table.AbstractTableModel;
 
 import simulator.control.Controller;
@@ -61,42 +62,69 @@ public class BodiesTableModel extends AbstractTableModel implements SimulatorObs
 
 	@Override
 	public void onRegister(List<Body> bodies, double time, double dt, String fLawsDesc) {
-		// TODO Auto-generated method stub
-		_bodies = bodies;
-		fireTableDataChanged();
+		SwingUtilities.invokeLater( new Runnable() {
+
+			@Override
+			public void run() {
+				_bodies = bodies;
+				fireTableDataChanged();				
+			}});
+		
 	}
 
 	@Override
 	public void onReset(List<Body> bodies, double time, double dt, String fLawsDesc) {
-		// TODO Auto-generated method stub
-		_bodies = bodies;
-		fireTableDataChanged();
+		SwingUtilities.invokeLater( new Runnable() {
+
+			@Override
+			public void run() {
+				_bodies = bodies;
+				fireTableDataChanged();				
+			}});		
 	}
 
 	@Override
 	public void onBodyAdded(List<Body> bodies, Body b) {
-		// TODO Auto-generated method stub
-		_bodies = bodies;
-		fireTableDataChanged();
+		SwingUtilities.invokeLater( new Runnable() {
+
+			@Override
+			public void run() {
+				_bodies = bodies;
+				fireTableDataChanged();				
+			}});
 	}
 
 	@Override
 	public void onAdvance(List<Body> bodies, double time) {
-		// TODO Auto-generated method stub
-		_bodies = bodies;
-		fireTableDataChanged();
+		SwingUtilities.invokeLater( new Runnable() {
+
+			@Override
+			public void run() {
+				_bodies = bodies;
+				fireTableDataChanged();				
+			}});
 	}
 
 	@Override
 	public void onDeltaTimeChanged(double dt) {
-		// TODO Auto-generated method stub
-		fireTableDataChanged();
+		SwingUtilities.invokeLater( new Runnable() {
+
+		@Override
+		public void run() {
+			fireTableDataChanged();
+			
+		}});
 	}
 
 	@Override
 	public void onForceLawsChanged(String fLawsDesc) {
-		// TODO Auto-generated method stub
-		fireTableDataChanged();
+		SwingUtilities.invokeLater( new Runnable() {
+
+			@Override
+			public void run() {
+				fireTableDataChanged();
+				
+			}});
 	}
 
 }

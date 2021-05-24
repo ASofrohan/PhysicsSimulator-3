@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JComponent;
+import javax.swing.SwingUtilities;
 
 import simulator.control.Controller;
 import simulator.misc.Vector2D;
@@ -227,31 +228,50 @@ public class Viewer extends JComponent implements SimulatorObserver {
 		// ...
 	@Override
 	public void onRegister(List<Body> bodies, double time, double dt, String fLawsDesc) {
-		// TODO Auto-generated method stub
-		_bodies = bodies;
-		autoScale();
-		repaint();
+		SwingUtilities.invokeLater( new Runnable() {
+
+			@Override
+			public void run() {
+				_bodies = bodies;
+				autoScale();
+				repaint();			
+			}});// TODO Auto-generated method stub
 	}
 	@Override
 	public void onReset(List<Body> bodies, double time, double dt, String fLawsDesc) {
-		// TODO Auto-generated method stub
-		_bodies = bodies;
-		autoScale();
-		repaint();
+		SwingUtilities.invokeLater( new Runnable() {
+
+			@Override
+			public void run() {
+				_bodies = bodies;
+				autoScale();
+				repaint();			
+			}});// TODO Auto-generated method stub
 	}
 	@Override
 	public void onBodyAdded(List<Body> bodies, Body b) {
-		// TODO Auto-generated method stub
-		_bodies = bodies;
-		autoScale();
-		repaint();
+		
+		SwingUtilities.invokeLater( new Runnable() {
+
+			@Override
+			public void run() {
+				_bodies = bodies;
+				autoScale();
+				repaint();			
+			}});// TODO Auto-generated method stub
+		
 	}
 	@Override
 	public void onAdvance(List<Body> bodies, double time) {
-		// TODO Auto-generated method stub
-		_bodies = bodies;
-		autoScale();
-		repaint();
+		SwingUtilities.invokeLater( new Runnable() {
+
+			@Override
+			public void run() {
+				_bodies = bodies;
+				autoScale();
+				repaint();			
+			}});
+		
 	}
 	@Override
 	public void onDeltaTimeChanged(double dt) {

@@ -30,7 +30,6 @@ import simulator.model.SimulatorObserver;
 public class ControlPanel extends JPanel implements SimulatorObserver {
 	// ...
 	private Controller _ctrl;
-	private boolean _stopped;
 	private JToolBar toolBar;
 	private JButton load;
 	private JFileChooser chooser;
@@ -41,12 +40,16 @@ public class ControlPanel extends JPanel implements SimulatorObserver {
 	private JSpinner steps;
 	private TextField deltaTime;
 	private ChangeForceClassDialog dialogoF;
+	//nuevo
+	private JSpinner delay;
+	private volatile Thread  _thread;
+
+
 
 	
 	ControlPanel(Controller ctrl) {
 		chooser = new JFileChooser(System.getProperty("user.dir") + "/resources/examples");
 		_ctrl = ctrl;
-		_stopped = true;
 		dialogoF = new ChangeForceClassDialog(_ctrl);
 		initGUI();
 		this.add(toolBar, BorderLayout.PAGE_START);		
@@ -88,11 +91,18 @@ public class ControlPanel extends JPanel implements SimulatorObserver {
 		play.setIcon(new ImageIcon("resources\\icons\\run.png"));
 		play.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                _stopped = false;
                 enableToolBar(false);
                 _ctrl.setDeltaTime((Integer.parseInt(deltaTime.getText())));
-                run_sim((int)steps.getValue());
-                
+                _thread = new Thread() {
+                	public void run() {
+                        run_sim_hilo((int)steps.getValue(), (int)delay.getValue());
+                        
+
+                	}
+                }; 
+                _thread.start();
+                _thread.run();
+                _thread = null;
                 
             }
         });
@@ -103,12 +113,18 @@ public class ControlPanel extends JPanel implements SimulatorObserver {
 		stop.setIcon(new ImageIcon("resources\\icons\\stop.png"));
 		stop.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-            	_stopped = true;
-                enableToolBar(true);
+                if(_thread != null) _thread.interrupt();
+                	
+            	enableToolBar(true);
             }
         });
 		stop.setToolTipText("End simulation");
 		
+		//NUEVO
+		toolBar.add(new JLabel("Delay:"));
+		SpinnerNumberModel sd= new SpinnerNumberModel(0,0,1000,1);
+		delay = new JSpinner(sd);
+		toolBar.add(delay);
 		
 		toolBar.add(new JLabel("Steps:"));
 		SpinnerNumberModel sm= new SpinnerNumberModel(1,1,99999,100);
@@ -142,8 +158,10 @@ public class ControlPanel extends JPanel implements SimulatorObserver {
 	// other private/protected methods
 	// ...
 	
-	private void run_sim(int n) {
-		if ( n>0 && !_stopped ) {
+	
+	
+	private void run_sim_hilo(int n, long delay) {
+		if ( n>0  && !Thread.interrupted()) {
 			try {
 				_ctrl.run(1);
 			} catch (Exception e) {
@@ -152,23 +170,35 @@ public class ControlPanel extends JPanel implements SimulatorObserver {
 				JOptionPane.showMessageDialog(new JFrame(), e.getMessage(), "ERROR",
 				        JOptionPane.ERROR_MESSAGE);
 				enableToolBar(true);
-				_stopped = true;
 				return;
 				}
+			try {
+				Thread.sleep(delay);
+			} catch (InterruptedException e) {
+				JOptionPane.showMessageDialog(new JFrame(), e.getMessage(), "ERROR",
+				        JOptionPane.ERROR_MESSAGE);
+				enableToolBar(true);
+				return;
+			}
+			
+			
+
 			SwingUtilities.invokeLater( new Runnable() {
 				@Override 
 				public void run() {
-					run_sim(n-1);
+					run_sim_hilo(n-1, delay);
 				}
+				
 			});
 			
 			
 		} 
 		else {
-			_stopped = true;
 			enableToolBar(true);
-			// TODO enable all buttons
-		}
+			_thread.interrupt();
+            _thread = null;
+		}		
+
 	}
 	
 	private void enableToolBar(boolean enable) {

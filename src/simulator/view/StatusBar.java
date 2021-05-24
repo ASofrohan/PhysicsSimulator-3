@@ -10,6 +10,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 
 import simulator.control.Controller;
 import simulator.model.Body;
@@ -51,36 +52,63 @@ public class StatusBar extends JPanel implements SimulatorObserver {
 		}
 	
 	@Override
-	public void onRegister(List<Body> bodies, double time, double dt, String fLawsDesc) {
-		steps = time;	
-		_currTime.setText("Time: "+String.valueOf(this.steps));
-		this.bodies = bodies.size();	
-		_numOfBodies.setText("Bodies: : "+String.valueOf(this.bodies));
-		law = fLawsDesc;	
-		_currLaws.setText("Laws: "+String.valueOf(this.law));
+	public void onRegister(List<Body> bodiess, double time, double dt, String fLawsDesc) {
+		SwingUtilities.invokeLater( new Runnable() {
+
+			@Override
+			public void run() {
+				steps = time;	
+				_currTime.setText("Time: "+String.valueOf(steps));
+				bodies = bodiess.size();	
+				_numOfBodies.setText("Bodies: : "+String.valueOf(bodies));
+				law = fLawsDesc;	
+				_currLaws.setText("Laws: "+String.valueOf(law));				
+			}});
+		
 	}
 
 	@Override
-	public void onReset(List<Body> bodies, double time, double dt, String fLawsDesc) {
-		steps = time;	
-		_currTime.setText("Time: "+String.valueOf(this.steps));
-		this.bodies = bodies.size();	
-		_numOfBodies.setText("Bodies: : "+String.valueOf(this.bodies));
-		law = fLawsDesc;	
-		_currLaws.setText("Laws: "+String.valueOf(this.law));
+	public void onReset(List<Body> bodiess, double time, double dt, String fLawsDesc) {
+		SwingUtilities.invokeLater( new Runnable() {
+
+			@Override
+			public void run() {
+				steps = time;	
+				_currTime.setText("Time: "+String.valueOf(steps));
+				bodies = bodiess.size();	
+				_numOfBodies.setText("Bodies: : "+String.valueOf(bodies));
+				law = fLawsDesc;	
+				_currLaws.setText("Laws: "+String.valueOf(law));				
+			}});
+
+		
 	}
 
 	@Override
-	public void onBodyAdded(List<Body> bodies, Body b) {
-		this.bodies++;	
-		_numOfBodies.setText("Bodies: : "+String.valueOf(this.bodies));
+	public void onBodyAdded(List<Body> bodiess, Body b) {
+		SwingUtilities.invokeLater( new Runnable() {
+
+			@Override
+			public void run() {
+				bodies++;	
+				_numOfBodies.setText("Bodies: : "+String.valueOf(bodies));				
+			}});
+
+		
 
 	}
 
 	@Override
 	public void onAdvance(List<Body> bodies, double time) {
-		steps = time;	
-		_currTime.setText("Time: "+String.valueOf(this.steps));
+		SwingUtilities.invokeLater( new Runnable() {
+
+			@Override
+			public void run() {
+				steps = time;	
+				_currTime.setText("Time: "+String.valueOf(steps));				
+			}});
+
+		
 
 	}
 
@@ -92,8 +120,14 @@ public class StatusBar extends JPanel implements SimulatorObserver {
 
 	@Override
 	public void onForceLawsChanged(String fLawsDesc) {
-		law = fLawsDesc;	
-		_currLaws.setText("Laws: "+String.valueOf(this.law));
+		SwingUtilities.invokeLater( new Runnable() {
+
+			@Override
+			public void run() {
+				law = fLawsDesc;	
+				_currLaws.setText("Laws: "+String.valueOf(law));			
+			}});
+		
 
 	}
 
