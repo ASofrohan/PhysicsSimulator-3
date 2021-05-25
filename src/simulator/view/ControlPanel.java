@@ -96,13 +96,14 @@ public class ControlPanel extends JPanel implements SimulatorObserver {
                 _thread = new Thread() {
                 	public void run() {
                         run_sim_hilo((int)steps.getValue(), (int)delay.getValue());
-                        
+                        enableToolBar(true);
+                        _thread = null;
+
+
 
                 	}
                 }; 
                 _thread.start();
-                _thread.run();
-                _thread = null;
                 
             }
         });
@@ -115,7 +116,6 @@ public class ControlPanel extends JPanel implements SimulatorObserver {
             public void actionPerformed(ActionEvent e) {
                 if(_thread != null) _thread.interrupt();
                 	
-            	enableToolBar(true);
             }
         });
 		stop.setToolTipText("End simulation");
@@ -161,7 +161,7 @@ public class ControlPanel extends JPanel implements SimulatorObserver {
 	
 	
 	private void run_sim_hilo(int n, long delay) {
-		if ( n>0  && !Thread.interrupted()) {
+		while( n>0  && !Thread.interrupted()) {
 			try {
 				_ctrl.run(1);
 			} catch (Exception e) {
@@ -175,29 +175,15 @@ public class ControlPanel extends JPanel implements SimulatorObserver {
 			try {
 				Thread.sleep(delay);
 			} catch (InterruptedException e) {
-				JOptionPane.showMessageDialog(new JFrame(), e.getMessage(), "ERROR",
-				        JOptionPane.ERROR_MESSAGE);
+				Thread.currentThread().interrupt();
 				enableToolBar(true);
 				return;
 			}
+			n--;
 			
-			
-
-			SwingUtilities.invokeLater( new Runnable() {
-				@Override 
-				public void run() {
-					run_sim_hilo(n-1, delay);
-				}
 				
-			});
-			
-			
 		} 
-		else {
-			enableToolBar(true);
-			_thread.interrupt();
-            _thread = null;
-		}		
+		
 
 	}
 	
