@@ -180,11 +180,7 @@ public class ControlPanel extends JPanel implements SimulatorObserver {
 				return;
 			}
 			n--;
-			
-				
 		} 
-		
-
 	}
 	
 	private void enableToolBar(boolean enable) {
